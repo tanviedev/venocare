@@ -15,7 +15,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = ['*']  # or ['your-app-name.onrender.com'] after deployment
+import os
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost').split(',')
+ # or ['your-app-name.onrender.com'] after deployment
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,8 +30,6 @@ SECRET_KEY = 'django-insecure-f-qdq$(x!_*5#)acp%-s^!h(!30m%-^+n4cprv7%*_3c0=%i%z
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
 
 
 # Application definition
