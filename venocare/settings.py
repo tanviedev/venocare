@@ -16,7 +16,13 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG') == 'False'
 
 import os
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost').split(',')
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # Make sure this is before using os.getenv
+
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost').split(' ')
+
  # or ['your-app-name.onrender.com'] after deployment
 
 
