@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<title>My Recovery Plan</title>
+
+<h1 class="page-title">Your Recovery Plan History</h1>
+
+<div class="plan-container">
+  {% if plans %}
+    {% for plan in plans %}
+      <div class="plan-card">
+        <h2 class="plan-stage">Stage: {{ plan.stage|upper }}</h2>
+        <div class="plan-time">
+        <p class="plan-text"><strong>Recovery Tips:</strong> {{ plan.plan_text }}</p>
+        <p class="timestamp">Saved on: {{ plan.created_at|date:"F d, Y H:i" }}</p>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="no-plans-msg">No recovery plans found. Upload an image to get started.</p>
+  {% endif %}
+</div>
+{% endblock %}

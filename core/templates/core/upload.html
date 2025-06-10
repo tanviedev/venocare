@@ -1,0 +1,22 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'core/style.css' %}">
+
+<div class="auth-page">
+  <div class="auth-box text-center">
+    <h2 class="mb-4">Upload Image for CVI Detection</h2>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="file" name="image" id="image" required class="form-control mb-3">
+      <button type="submit" class="btn btn-success w-100">Upload & Predict</button>
+    </form>
+  </div>
+</div>
+<p class="text-center mt-3">
+  <a href="{% url 'home' %}" class="btn btn-link text-decoration-none">← Back to Home</a>
+</p>
+{% endblock %}
+
+

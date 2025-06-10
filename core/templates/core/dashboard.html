@@ -1,0 +1,140 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'core/style.css' %}">
+
+<!-- Home button below navbar -->
+<div class="home-button-wrapper">
+  <a href="{% url 'home' %}" class="home-btn">🏠 Home</a>
+</div>
+
+<div class="dashboard-container">
+  <h2 class="greeting">Hello, {{ user.username }}</h2>
+
+  <div class="dashboard-actions">
+    <a href="{% url 'upload_image' %}" class="action-btn primary">📤 Upload Image</a>
+    <a href="{% url 'my_recovery_plan' %}" class="action-btn success">📋 Recovery Plan</a>
+    <a href="{% url 'daily_checkin' %}" class="action-btn warning">🗓️ Daily Check-in</a>
+    <a href="{% url 'export_user_reports_csv' %}" class="action-btn secondary">📁 Export Reports (CSV)</a>
+  </div>
+
+  <div class="tts-section">
+    <label for="tts-lang">🔊 Select Language:</label>
+    <select id="tts-lang">
+      <option value="en">English</option>
+      <option value="hi">Hindi</option>
+      <option value="mr">Marathi</option>
+    </select>
+    <button id="dashboard-tts-toggle" onclick="toggleDashboardTTS()">▶️ Read Dashboard Summary</button>
+  </div>
+
+  <h3 class="section-title">📈 Scan Trends</h3>
+  <canvas id="scanChart" width="400" height="200"></canvas>
+
+  {{ dates|json_script:"dates-data" }}
+  {{ scores|json_script:"scores-data" }}
+  {{ stages|json_script:"stages-data" }}
+
+  <h3 class="section-title">🖼️ Your Past Scans</h3>
+  <ul class="scan-history">
+    {% for p in images %}
+      <li>{{ p.uploaded_at }} — Score: {{ p.rvcss_score }} | Stage: {{ p.stage }}</li>
+    {% empty %}
+      <li>No scans saved yet.</li>
+    {% endfor %}
+  </ul>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const dashboardTranslations = {
+    en: {
+      welcome: "Welcome to your VenoCare Dashboard.",
+      activity: "You have uploaded {{ uploaded_count }} scans.",
+      progress: "Your last rVCSS score was {{ latest_score }}.",
+      tip: "Remember to check-in daily for faster recovery."
+    },
+    hi: {
+      welcome: "आपके वेनोकेयर डैशबोर्ड में स्वागत है।",
+      activity: "आपने {{ uploaded_count }} स्कैन अपलोड किए हैं।",
+      progress: "आपका अंतिम आरवीसीएसएस स्कोर था {{ latest_score }}।",
+      tip: "तेज़ सुधार के लिए रोज़ाना चेक-इन करना न भूलें।"
+    },
+    mr: {
+      welcome: "तुमच्या वेनोकेअर डॅशबोर्डमध्ये स्वागत आहे.",
+      activity: "तुम्ही {{ uploaded_count }} स्कॅन अपलोड केले आहेत.",
+      progress: "तुमचा शेवटचा आरव्हीसीएसएस स्कोअर होता {{ latest_score }}.",
+      tip: "जलद सुधारासाठी दररोज चेक-इन करायला विसरू नका."
+    }
+  };
+
+  let synth = window.speechSynthesis;
+  let utterance;
+  let isSpeaking = false;
+  let isPaused = false;
+
+  function toggleDashboardTTS() {
+    const button = document.getElementById("dashboard-tts-toggle");
+    const lang = document.getElementById("tts-lang").value;
+
+    if (lang === 'mr') {
+      alert("Marathi voice not supported on most browsers. Using Hindi voice.");
+    }
+
+    if (isSpeaking && !isPaused) {
+      synth.pause();
+      isPaused = true;
+      button.innerText = "⏸️ Paused (Click to Resume)";
+      return;
+    }
+
+    if (isPaused) {
+      synth.resume();
+      isPaused = false;
+      button.innerText = "⏹️ Speaking... (Click to Pause)";
+      return;
+    }
+
+    const t = dashboardTranslations[lang];
+    const message = `${t.welcome} ${t.activity} ${t.progress} ${t.tip}`;
+
+    utterance = new SpeechSynthesisUtterance(message);
+    utterance.lang = (lang === 'mr') ? 'hi-IN' : lang + '-IN';
+
+    utterance.onstart = () => {
+      isSpeaking = true;
+      button.innerText = "⏹️ Speaking... (Click to Pause)";
+    };
+
+    utterance.onend = () => {
+      isSpeaking = false;
+      isPaused = false;
+      button.innerText = "▶️ Read Dashboard Summary";
+    };
+
+    synth.cancel();
+    synth.speak(utterance);
+  }
+
+  const dates = JSON.parse(document.getElementById('dates-data').textContent);
+  const scores = JSON.parse(document.getElementById('scores-data').textContent);
+  const stages = JSON.parse(document.getElementById('stages-data').textContent);
+
+  new Chart(document.getElementById("scanChart"), {
+    type: 'line',
+    data: {
+      labels: dates,
+      datasets: [{
+        label: "rVCSS Score",
+        data: scores,
+        borderColor: "#104944",
+        backgroundColor: "rgba(16, 73, 68, 0.1)",  // ✅ transparent green fill
+        fill: true,                                // ✅ fill area below the line
+        tension: 0.1,                               // optional: smooth curves
+        pointBackgroundColor: "#104944",
+      }]
+    }
+  });
+</script>
+{% endblock %}

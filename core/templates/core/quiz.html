@@ -1,0 +1,33 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}rVCSS Quiz{% endblock %}
+
+{% block content %}
+<div class="quiz-container">
+  <h2 class="quiz-heading">📝 Revised Venous Clinical Severity Score (rVCSS) Quiz</h2>
+
+  <form method="post" novalidate class="quiz-form">
+    {% csrf_token %}
+
+    {% for field in form %}
+      <div class="quiz-question">
+        <label class="question-label">{{ field.label }}</label>
+        <div class="option-group">
+          {% for radio in field %}
+            <label class="option-label">
+              {{ radio.tag }} {{ radio.choice_label }}
+            </label>
+          {% endfor %}
+        </div>
+        {% if field.errors %}
+          <div class="quiz-error">{{ field.errors|striptags }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary quiz-submit-btn">✅ Submit Quiz</button>
+  </form>
+</div>
+{% endblock %}
+

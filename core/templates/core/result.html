@@ -1,0 +1,137 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Prediction Result{% endblock %}
+
+{% block content %}
+<div class="result-container">
+  <h2 class="result-heading">🩺 Prediction Results</h2>
+
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <div class="result-grid">
+    <div class="result-info">
+      <p><strong>Status:</strong>
+        {% if status == 'infected' %}
+          <span class="status-badge infected">{{ status|title }}</span>
+        {% else %}
+          <span class="status-badge normal">{{ status|title }}</span>
+        {% endif %}
+      </p>
+      <p><strong>Stage:</strong> {{ stage|title }}</p>
+      <p><strong>rVCSS Score:</strong> {{ rvcss_score }}</p>
+    </div>
+
+    <div class="result-image">
+      <h4>Predicted Image</h4>
+      <img src="{{ result_image }}" alt="Prediction Result">
+    </div>
+  </div>
+
+  {% if user.is_authenticated %}
+    {% if not result_saved %}
+      <form method="POST" action="{% url 'save_prediction' %}" class="save-form">
+        {% csrf_token %}
+        <input type="hidden" name="stage" value="{{ stage }}">
+        <input type="hidden" name="status" value="{{ status }}">
+        <input type="hidden" name="rvcss_score" value="{{ rvcss_score }}">
+        <input type="hidden" name="result_image_url" value="{{ result_image_url }}">
+        <input type="hidden" name="original_image_url" value="{{ original_image_url }}">
+        <button type="submit">💾 Save to Dashboard</button>
+      </form>
+    {% else %}
+      <p class="saved-msg">✔️ Result already saved.</p>
+    {% endif %}
+  {% else %}
+    <p class="login-prompt">
+      <a href="{% url 'login' %}">Login</a> to save this result to your dashboard.
+    </p>
+  {% endif %}
+
+  <div class="tts-controls">
+    <label for="tts-lang">🔊 Select Language:</label>
+    <select id="tts-lang">
+      <option value="en">English</option>
+      <option value="hi">Hindi</option>
+      <option value="mr">Marathi</option>
+    </select>
+    <button id="tts-toggle" onclick="toggleTTS()">▶️ Read Aloud</button>
+  </div>
+</div>
+
+<script>
+  if (lang === 'mr') {
+    alert("Marathi voice not available on most browsers. Falling back to Hindi voice.");
+  }
+
+  const translations = {
+    en: { intro: "Your diagnosis result is:", status: "Status", stage: "Stage", score: "rVCSS Score", advice: "Recovery Advice" },
+    hi: { intro: "आपका निदान परिणाम है:", status: "स्थिति", stage: "चरण", score: "आरवीसीएसएस स्कोर", advice: "उपचार योजना" },
+    mr: { intro: "आपला निदान परिणाम आहे:", status: "स्थिती", stage: "टप्पा", score: "rVCSS गुण", advice: "उपचार सल्ला" }
+  };
+
+  let synth = window.speechSynthesis;
+  let utterance;
+  let isSpeaking = false;
+  let isPaused = false;
+
+  function toggleTTS() {
+    const button = document.getElementById("tts-toggle");
+    const lang = document.getElementById("tts-lang").value;
+    const t = translations[lang];
+
+    if (isSpeaking && !isPaused) {
+      synth.pause();
+      isPaused = true;
+      button.innerText = "⏸️ Paused (Click to Resume)";
+      return;
+    }
+
+    if (isPaused) {
+      synth.resume();
+      isPaused = false;
+      button.innerText = "⏹️ Speaking... (Click to Pause)";
+      return;
+    }
+
+    const textToSpeak = `
+      ${t.intro}
+      ${t.status} - {{ status|default:"Not available" }},
+      ${t.stage} - {{ stage|default:"Not specified" }},
+      ${t.score} - {{ rvcss_score|default:"Unknown" }},
+      ${t.advice} - {{ recovery_plan.plan_text|default:"No plan available" }}
+    `;
+
+    utterance = new SpeechSynthesisUtterance(textToSpeak);
+    utterance.lang = (lang === 'mr') ? 'hi-IN' : lang + '-IN';
+    utterance.rate = 1;
+    utterance.pitch = 1;
+
+    utterance.onstart = () => {
+      isSpeaking = true;
+      isPaused = false;
+      button.innerText = "⏹️ Speaking... (Click to Pause)";
+    };
+
+    utterance.onend = () => {
+      isSpeaking = false;
+      isPaused = false;
+      button.innerText = "▶️ Read Aloud";
+    };
+
+    synth.cancel();
+    synth.speak(utterance);
+  }
+</script>
+<p class="text-center mt-3">
+  <a href="{% url 'home' %}" class="btn btn-link text-decoration-none">← Back to Home</a>
+</p>
+{% endblock %}
+
+

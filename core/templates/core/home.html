@@ -1,0 +1,132 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'core/style.css' %}">
+
+<section class="video-hero">
+    <video autoplay muted loop playsinline class="hero-video">
+    <source src="{% static 'videos/cvi_vid1.mp4' %}" type="video/mp4">
+</video>
+</section>
+
+<section class="overview">
+    <h2>What is CVI?</h2>
+    <p>CVI occurs when the valves in the veins of your legs become damaged or weakened, causing blood to pool instead of flowing back to your heart properly. This leads to symptoms like swelling, pain, and skin changes.</p>
+</section>
+
+<section class="symptoms">
+    <h2>Symptoms</h2>
+    <ul>
+        <li>Swelling in the lower legs and ankles</li>
+        <li>Aching or heaviness in the legs</li>
+        <li>Varicose veins</li>
+        <li>Skin discoloration or ulcers</li>
+        <li>Itching or burning sensations</li>
+    </ul>
+</section>
+
+<section class="hero">
+    <h1>Understanding Chronic Venous Insufficiency</h1>
+    <p>Chronic Venous Insufficiency is a common condition affecting millions worldwide, where the veins in your legs struggle to send blood back to your heart efficiently. Early detection and management can greatly improve quality of life.</p>
+    <img src="{% static 'images\cvi_img1.png' %}" alt="Infographic explaining Chronic Venous Insufficiency" class="responsive-img"/>
+</section>
+
+<section class="feature-section">
+  <h2 class="text-center mb-5">Explore Venocare Features</h2>
+  <div class="features-container">
+    <ul class="feature-list">
+      <li data-feature="login">Personalized Login</li>
+      <li data-feature="upload">Upload Without Login</li>
+      <li data-feature="progress">Progress Reports</li>
+      <li data-feature="csv">Export CSV Reports to Doctors</li>
+      <li data-feature="quiz">rVCSS Quiz</li>
+      <li data-feature="recovery">Recovery Plan Integration</li>
+      <li data-feature="checkin">Daily Check-In</li>
+    </ul>
+    <div class="feature-details">
+      <img id="feature-img" src="{% static 'images/features/login.png' %}" alt="Feature Preview">
+      <p id="feature-desc">Hover over a feature to see the details!</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  const features = {
+    login: {
+      img: "{% static 'images/features/login.png' %}",
+      desc: "Personalized login experience to track your own journey over time."
+    },
+    upload: {
+      img: "{% static 'images/features/upload.png' %}",
+      desc: "Upload images without logging in to get quick CVI insights."
+    },
+    progress: {
+      img: "{% static 'images/features/progress.png' %}",
+      desc: "See your CVI progress visually through dynamic graphs and analysis."
+    },
+    csv: {
+      img: "{% static 'images/features/csv.png' %}",
+      desc: "Export detailed reports in CSV format for doctor reviews."
+    },
+    quiz: {
+      img: "{% static 'images/features/quiz.png' %}",
+      desc: "Complete a short rVCSS quiz to assess your clinical severity."
+    },
+    recovery: {
+      img: "{% static 'images/features/recovery.png' %}",
+      desc: "Get a tailored recovery plan based on your condition and history."
+    },
+    checkin: {
+      img: "{% static 'images/features/checkin.png' %}",
+      desc: "Log daily symptoms and lifestyle notes to keep track of your recovery."
+    }
+  };
+
+  const items = document.querySelectorAll(".feature-list li");
+  const img = document.getElementById("feature-img");
+  const desc = document.getElementById("feature-desc");
+
+  items.forEach(item => {
+    item.addEventListener("mouseenter", () => {
+      const key = item.dataset.feature;
+      img.src = features[key].img;
+      desc.textContent = features[key].desc;
+    });
+  });
+</script>
+
+<section class="causes">
+    <h2>Causes & Risk Factors</h2>
+    <p>CVI can be caused by valve damage, blood clots, obesity, pregnancy, prolonged standing, or family history.</p>
+</section>
+
+<section class="diagnosis">
+    <h2>Diagnosis</h2>
+    <p>Doctors diagnose CVI with physical exams and imaging tests such as Doppler ultrasound.</p>
+</section>
+
+<section class="treatment">
+    <h2>Treatment Options</h2>
+    <p>Treatment ranges from lifestyle changes, compression stockings, medications, to surgical interventions depending on severity.</p>
+    <a href="{% url 'upload_image' %}" class="btn">Get Started: Upload Your Leg Image</a>
+</section>
+
+<section class="prevention">
+    <h2>Prevention Tips</h2>
+    <ul>
+        <li>Exercise regularly to improve leg circulation</li>
+        <li>Avoid prolonged standing or sitting</li>
+        <li>Maintain a healthy weight</li>
+        <li>Elevate legs when resting</li>
+    </ul>
+</section>
+
+<section class="learn-more">
+    <h2>Learn More</h2>
+    <p>For more information, visit these trusted sources:</p>
+   <a href="https://www.mayoclinic.org/diseases-conditions/chronic-venous-insufficiency" target="_blank" rel="noopener">Mayo Clinic: Chronic Venous Insufficiency</a><br>
+   <a href="https://www.cdc.gov/ncbddd/venousinsufficiency/index.html" target="_blank" rel="noopener">CDC: Venous Insufficiency</a>
+</section>
+{% endblock %}
+

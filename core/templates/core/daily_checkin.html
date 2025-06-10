@@ -1,0 +1,25 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+<div class="checkin-container">
+  <h2 class="checkin-title">🩺 Daily Health Check-In</h2>
+
+  <form method="post" class="checkin-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success submit-btn">✅ Submit Check-In</button>
+  </form>
+
+  {% if user.userprofile %}
+    <div class="streak-info">
+      <p>🔥 <strong>Streak:</strong> {{ user.userprofile.streak }} days</p>
+      <p>🎖️ <strong>Badges:</strong> {{ user.userprofile.badges }}</p>
+    </div>
+  {% endif %}
+
+  <blockquote class="blockquote mt-4 motivational-quote">
+    <p class="mb-0">“{{ motivational_quote }}”</p>
+  </blockquote>
+</div>
+
+{% endblock %}
