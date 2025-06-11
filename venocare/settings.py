@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 SECRET_KEY = os.getenv('SECRET_KEY')
-DEBUG = os.getenv('DEBUG') == 'False'
+DEBUG = os.environ.get("DEBUG", "True") == "True"
 
 import os
 import os
@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 
 load_dotenv()  # Make sure this is before using os.getenv
 
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost').split(' ')
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(",")
 
  # or ['your-app-name.onrender.com'] after deployment
 
@@ -96,9 +96,8 @@ DATABASES = {
 import dj_database_url
 import os
 
-import dj_database_url
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600)
+    'default': dj_database_url.config(default=os.getenv("DATABASE_URL"))
 }
 
 
