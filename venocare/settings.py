@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 
 load_dotenv()  # Make sure this is before using os.getenv
 
-ALLOWED_HOSTS = ['your-render-url.onrender.com']
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
 
  # or ['your-app-name.onrender.com'] after deployment
 
