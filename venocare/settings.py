@@ -51,6 +51,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # For collectstatic
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Your local static files
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -61,6 +71,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 ROOT_URLCONF = 'venocare.urls'
 import os
@@ -148,12 +161,3 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGIN_REDIRECT_URL = '/'  # or the actual URL pattern name if using `reverse()`
 LOGOUT_REDIRECT_URL = '/'
-
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-from pathlib import Path
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-STATICFILES_DIRS = [ BASE_DIR / "static" ]  # This is what the warning is about
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
