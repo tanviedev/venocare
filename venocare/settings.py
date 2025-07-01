@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 
 load_dotenv()  # Make sure this is before using os.getenv
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(",")
+ALLOWED_HOSTS = ['your-render-url.onrender.com']
 
  # or ['your-app-name.onrender.com'] after deployment
 
@@ -35,7 +35,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-f-qdq$(x!_*5#)acp%-s^!h(!30m%-^+n4cprv7%*_3c0=%i%z'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 # Application definition
