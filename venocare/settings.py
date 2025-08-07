@@ -16,12 +16,13 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.environ.get("DEBUG", "True") == "True"
 
 import os
-import os
 from dotenv import load_dotenv
 
-load_dotenv()  # Make sure this is before using os.getenv
+load_dotenv()
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
+SECRET_KEY = os.getenv('SECRET_KEY', 'your-local-dev-secret-key')  # Add fallback
+DEBUG = os.getenv("DEBUG", "True") == "True"
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
  # or ['your-app-name.onrender.com'] after deployment
 
@@ -95,22 +96,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'venocare.wsgi.application'
 
-
+"""
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-"""
+
 import dj_database_url
 import os
-
+"""
+# Use SQLite (default for local development)
 DATABASES = {
-    'default': dj_database_url.config(default=os.getenv("DATABASE_URL"))
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 
@@ -150,6 +154,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 import os
 STATIC_URL = 'static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
